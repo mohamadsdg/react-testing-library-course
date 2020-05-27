@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import {queries, getQueriesForElement} from '@testing-library/dom'
-import {render as renderTLR} from '@testing-library/react'
+import {render as renderTLR, cleanup} from '@testing-library/react'
 import {FavoriteNumber} from '../favorite-number'
 
 // simulate ender in @testing-library/react
@@ -13,11 +13,22 @@ function render(ui) {
   return {container, ...query}
 }
 
+// afterEach(cleanup)
+
 test('renders a number input with a label "Favorite Number"', () => {
   //   const {getByLabelText} = render(<FavoriteNumber />)
+  //   console.log(document.body.outerHTML)
 
-  const {getByLabelText} = renderTLR(<FavoriteNumber />)
+  const {getByLabelText, unmount, debug} = renderTLR(<FavoriteNumber />)
+  //   debug()
+  //   console.log(document.body.outerHTML)
 
   const input = getByLabelText(/favorite number/i)
   expect(input).toHaveAttribute('type', 'number')
+
+  //   unmount()
+  //   cleanup()
+
+  //   console.log(document.body.outerHTML)
+  debug()
 })
