@@ -1,5 +1,5 @@
 import React from 'react'
-import {render} from '@testing-library/react'
+import {render, fireEvent} from '@testing-library/react'
 import {ErrorBoundary} from '../error-boundary'
 import {reportError as mockReportError} from '../api'
 
@@ -19,27 +19,62 @@ beforeAll(() => {
 
 afterAll(() => {
   console.error.mockRestore()
-  console.error('test error')
+  // console.error('after all runner')
 })
 
 afterEach(() => {
   jest.clearAllMocks()
+  // console.log('afterEach')
 })
-test('calls reportError and renders that there was a problem', () => {
-  mockReportError.mockResolvedValueOnce({success: true})
+describe('about reportError', () => {
+  test('calls reportError and renders that there was a problem', () => {
+    mockReportError.mockResolvedValueOnce({success: true})
 
-  const {rerender} = render(
-    <ErrorBoundary>
-      <Bomb />
-    </ErrorBoundary>,
-  )
-  rerender(
-    <ErrorBoundary>
-      <Bomb shouldThrow={true} />
-    </ErrorBoundary>,
-  )
-  const error = expect.any(Error)
-  const info = {componentStack: expect.stringContaining('Bomb')}
-  expect(mockReportError).toHaveBeenCalledWith(error, info)
-  expect(mockReportError).toHaveBeenCalledTimes(1)
+    const {
+      rerender,
+      queryByRole,
+      getByText,
+      debug,
+      container,
+      getByRole,
+      queryByText,
+    } = render(
+      <ErrorBoundary>
+        <Bomb />
+      </ErrorBoundary>,
+    )
+
+    // debug(container)
+
+    rerender(
+      <ErrorBoundary>
+        <Bomb shouldThrow={true} />
+      </ErrorBoundary>,
+    )
+    const error = expect.any(Error)
+    const info = {componentStack: expect.stringContaining('Bomb')}
+    expect(mockReportError).toHaveBeenCalledWith(error, info)
+    expect(mockReportError).toHaveBeenCalledTimes(1)
+
+    // debug(container)
+    expect(getByRole('alert').textContent).toMatchInlineSnapshot(
+      `"There was a problem."`,
+    )
+
+    mockReportError.mockClear()
+    console.error.mockClear()
+
+    rerender(
+      <ErrorBoundary>
+        <Bomb />
+      </ErrorBoundary>,
+    )
+
+    fireEvent.click(getByText(/try again/i))
+
+    expect(mockReportError).not.toHaveBeenCalled()
+    expect(console.error).not.toHaveBeenCalled()
+    expect(queryByRole('alert')).not.toBeInTheDocument()
+    expect(queryByText(/try agine/i)).not.toBeInTheDocument()
+  })
 })
