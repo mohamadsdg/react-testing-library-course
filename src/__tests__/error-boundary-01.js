@@ -13,6 +13,15 @@ function Bomb({shouldThrow}) {
   }
 }
 
+beforeAll(() => {
+  jest.spyOn(console, 'error').mockImplementation(() => {})
+})
+
+afterAll(() => {
+  console.error.mockRestore()
+  console.error('test error')
+})
+
 afterEach(() => {
   jest.clearAllMocks()
 })
