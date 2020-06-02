@@ -2,7 +2,7 @@ import React from 'react'
 
 function Editor() {
   const [isSaving, setIsSaving] = React.useState(false)
-  function handleSubmit(e) {
+  const handleSubmit = e => {
     e.preventDefault()
     setIsSaving(true)
   }
