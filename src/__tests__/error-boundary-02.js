@@ -1,5 +1,5 @@
 import React from 'react'
-import {render, fireEvent} from '@testing-library/react'
+import {render} from '@testing-library/react'
 import {ErrorBoundary} from '../error-boundary'
 import {reportError as mockReportError} from '../api'
 
@@ -47,5 +47,7 @@ describe('about reportError', () => {
     const info = {componentStack: expect.stringContaining('Bomb')}
     expect(mockReportError).toHaveBeenCalledWith(error, info)
     expect(mockReportError).toHaveBeenCalledTimes(1)
+
+    expect(console.error).toHaveBeenCalledTimes(2)
   })
 })

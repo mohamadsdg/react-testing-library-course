@@ -30,7 +30,15 @@ describe('about reportError', () => {
   test('calls reportError and renders that there was a problem', () => {
     mockReportError.mockResolvedValueOnce({success: true})
 
-    const {rerender} = render(
+    const {
+      rerender,
+      queryByRole,
+      getByText,
+      debug,
+      container,
+      getByRole,
+      queryByText,
+    } = render(
       <ErrorBoundary>
         <Bomb />
       </ErrorBoundary>,
@@ -47,5 +55,26 @@ describe('about reportError', () => {
     const info = {componentStack: expect.stringContaining('Bomb')}
     expect(mockReportError).toHaveBeenCalledWith(error, info)
     expect(mockReportError).toHaveBeenCalledTimes(1)
+
+    // debug(container)
+    expect(getByRole('alert').textContent).toMatchInlineSnapshot(
+      `"There was a problem."`,
+    )
+
+    mockReportError.mockClear()
+    console.error.mockClear()
+
+    rerender(
+      <ErrorBoundary>
+        <Bomb />
+      </ErrorBoundary>,
+    )
+
+    fireEvent.click(getByText(/try again/i))
+
+    expect(mockReportError).not.toHaveBeenCalled()
+    expect(console.error).not.toHaveBeenCalled()
+    expect(queryByRole('alert')).not.toBeInTheDocument()
+    expect(queryByText(/try agine/i)).not.toBeInTheDocument()
   })
 })
