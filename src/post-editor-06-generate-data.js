@@ -5,7 +5,7 @@ import {savePost} from './api'
 function Editor({user}) {
   const [isSaving, setIsSaving] = React.useState(false)
   const [redirect, setRedirect] = React.useState(false)
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
     const {title, content, tags} = e.target.elements
     const newPost = {
@@ -16,7 +16,8 @@ function Editor({user}) {
       authorId: user.id,
     }
     setIsSaving(true)
-    savePost(newPost).then(() => setRedirect(true))
+    await savePost(newPost)
+    setRedirect(true)
   }
   if (redirect) {
     return <Redirect to="/" />
