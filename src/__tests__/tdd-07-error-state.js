@@ -25,6 +25,7 @@ const userBuilder = build('user').fields({
   id: sequence(s => `user-${s}`),
 })
 test('render a form with title,content,submit,tags', async () => {
+  mockSavePost.mockResolvedValueOnce()
   const fakeUser = userBuilder()
   const {getByText, getByLabelText} = render(<Editor user={fakeUser} />)
   const fakePost = postBuilder()
@@ -32,7 +33,7 @@ test('render a form with title,content,submit,tags', async () => {
   const preDate = new Date().getTime()
   getByLabelText(/title/i).value = fakePost.title
   getByLabelText(/content/i).value = fakePost.content
-  getByLabelText(/tags/i).value = fakePost.tags.join(',')
+  getByLabelText(/tags/i).value = fakePost.tags.join(', ')
   const submit = getByText(/submit/i)
 
   fireEvent.click(submit)
@@ -57,19 +58,22 @@ test('render a form with title,content,submit,tags', async () => {
   expect(date).toBeGreaterThanOrEqual(preDate)
   expect(date).toBeLessThanOrEqual(postDate)
 })
-test('renders an error message from the server', () => {
+test('renders an error message from the server', async () => {
   const fakeUser = userBuilder()
   const testError = 'test Error'
-  //   mockSavePost.mockRejectedValueOnce({data: {error: testError}})
+  mockSavePost.mockRejectedValueOnce({data: {error: testError}})
 
-  const {getByText, findByRole} = render(<Editor user={fakeUser} />)
+  const {getByText, findByRole, debug, container} = render(
+    <Editor user={fakeUser} />,
+  )
 
-  //   const submit = getByText(/submit/i)
+  const submit = getByText(/submit/i)
 
-  //   fireEvent.click(submit)
-  //   expect(submit).toBeDisabled()
+  fireEvent.click(submit)
+  expect(submit).toBeDisabled()
 
-  //   const postError = await findByRole('alert')
-  //   expect(postError).toHaveTextContent(testError)
-  //   console.log(mockSavePost)
+  const postError = await findByRole('alert')
+  // debug(container)
+  expect(postError).toHaveTextContent(testError)
+  // console.log(mockSavePost)
 })

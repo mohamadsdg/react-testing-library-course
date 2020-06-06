@@ -18,14 +18,16 @@ function Editor({user}) {
       authorId: user.id,
     }
     setIsSaving(true)
-    savePost(newPost).then(rsp => console.log(rsp))
-    console.log(newPost)
-    setRedirect(true)
-    // setError(rsp.data.error)
+    savePost(newPost).then(
+      () => {
+        setRedirect(true)
+      },
+      rsp => {
+        setError(rsp.data.error)
+        console.log(rsp)
+      },
+    )
   }
-  savePost().then(rsp => {
-    console.log(rsp)
-  })
   if (redirect) {
     return <Redirect to="/" />
   }
