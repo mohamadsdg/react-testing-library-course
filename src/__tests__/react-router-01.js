@@ -12,7 +12,7 @@ describe('', () => {
         <Main />
       </Router>,
     )
-
+    // console.log(history)
     expect(getByRole('heading')).toHaveTextContent(/home/i)
     fireEvent.click(getByTestId(/about/i))
     expect(getByRole('heading')).toHaveTextContent(/about/i)
