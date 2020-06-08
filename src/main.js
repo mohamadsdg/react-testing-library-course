@@ -24,7 +24,9 @@ function Main() {
   return (
     <div>
       <Link to="/">Home</Link>
-      <Link to="/about">About</Link>
+      <Link to="/about" data-testid="about">
+        About
+      </Link>
       <Switch>
         <Route exact path="/" component={Home} />
         <Route path="/about" component={About} />
